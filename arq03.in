@@ -1,0 +1,33 @@
+A = {-475, 271, 436, 866}
+B = {-604, 677}
+B c A
+515 e B
+B += -584
+B u A
+A c B
+A ^ B
+B c A
+B ^ A
+A -= 436
+815 e A
+B \ A
+A -= -894
+A \ B
+B ^ A
+A += -475
+-118 e B
+B ^ A
+B ^ A
+B u A
+B \ A
+935 e B
+A ^ B
+A \ B
+A c B
+A \ B
+A += 271
+B ^ A
+A ^ B
+B \ A
+677 e B
+Q
