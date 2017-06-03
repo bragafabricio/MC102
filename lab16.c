@@ -26,7 +26,7 @@ Parametros:
 
 void ordena(int *conj, int tam) {
  	int i, j;
-	char aux;
+	int aux;
 
 	for (i = tam - 1; i > 0; i--) {
 		for (j = 0; j < i; j++) {
@@ -130,7 +130,7 @@ Retorno
 int* init(int *tam, int *cap) {
 	*tam = 0;
 	*cap = 2;
-	int *ponte = malloc(*cap*sizeof(int));
+	int *ponte = malloc(2*sizeof(int));
   return ponte;
 }
 
@@ -169,16 +169,15 @@ int* adicao(int *conj, int *tam, int *cap, int elemento) {
 		conj = init(tam, cap);
 
 	if (!pertence(conj, *tam, elemento)){
-		if(*tam >= *cap){	
+		if(*tam == *cap){	
 			conj = realloc(conj,*cap*2*sizeof(int));
 			*cap = *cap*2;
 		}
-
-    conj[*tam] = elemento;
-    *tam = *tam + 1;
-  }
-
-  return conj;
+        conj[*tam] = elemento;
+        *tam = *tam + 1;
+        return conj;
+    }else
+        return conj;
 }
 
 /*
@@ -218,7 +217,7 @@ int* subtracao(int *conj, int *tam, int *cap, int elemento) {
               conj[i] = conj[*tam-1];
               *tam = *tam-1;
 
-              if (*tam <= (1/4)*(*cap)){
+              if (*tam <= (0.25)*(*cap) && *cap > 2){
               	conj = realloc(conj, *cap/2*sizeof(int));
               	*cap = *cap/2;
               }
@@ -263,20 +262,19 @@ Retorno
 */
 
 int* uniao(int *conj_A, int *conj_B, int tam_A, int tam_B, int *tam_C, int *cap_C) {
-  int i, *conj;
+  int i, j, *conj;
 
-  *tam_C = tam_A;
-
-	if(conj == NULL)
-		conj = init(tam_C, cap_C);
+    conj = init(tam_C, cap_C);
 
 	for (i=0; i<tam_A; i++){
-		conj[i] = conj_A[i];
+		conj = adicao(conj, tam_C, cap_C, conj_A[i]);
 	}
-	for (; i<(tam_B + tam_A); i++){
-		conj = adicao(conj, tam_C, cap_C, conj_B[i]);
+	for (j=0; j<tam_B; j++){
+		conj = adicao(conj, tam_C, cap_C, conj_B[j]);
 	}
-
+    
+    //free(conj_A);
+    //free(conj_B);
 	return conj;
 }
 
@@ -313,8 +311,8 @@ Retorno
 int* intersecao(int *conj_A, int *conj_B, int tam_A, int tam_B, int *tam_C, int *cap_C) {
   int *conj, i, j, k;
 
-	if(conj == NULL)
-		conj = init(tam_C, cap_C);
+
+    conj = init(tam_C, cap_C);
 
 	for (i=0; i<tam_A; i++){
 		for (j=0; j<tam_B; j++){
@@ -324,10 +322,11 @@ int* intersecao(int *conj_A, int *conj_B, int tam_A, int tam_B, int *tam_C, int 
 			}
 		}
 	}
+	//*tam_C = k; ========lixo?
+	//*cap_C = k*2; ======lixo?
 
-	*tam_C = k;
-	*cap_C = k*2;
-
+    //free(conj_A);
+    //free(conj_B);
 	return conj;
 }
 
@@ -362,21 +361,16 @@ Retorno
 */
 
 int* diferenca(int *conj_A, int *conj_B, int tam_A, int tam_B, int *tam_C, int *cap_C) {
-	int *conj, i, j, k;
-
-	if(conj == NULL)
+	int *conj, i, j;
+    
 	conj = init(tam_C, cap_C);
 
-	for (i=0; i<tam_A; i++){
-		for (j=0; j<tam_B; j++){
-			if(conj_A[i] != conj_B[i]){
-				conj[k] = conj_A[i];
-				k++;
-			}
-		}
-	}
-	*tam_C = k;
-	*cap_C = k*2;
-
-	return conj;
+    
+    for(i=0; i<tam_A; i++){
+       conj = adicao(conj, tam_C, cap_C, conj_A[i]);
+    }
+    for(j=0; j<tam_B; j++){
+        conj = subtracao(conj, tam_C, cap_C, conj_B[j]);
+    }
+    return conj;
 }
